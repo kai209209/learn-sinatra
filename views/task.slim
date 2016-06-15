@@ -1,0 +1,12 @@
+li id=task.id
+  = task.name
+  form.update action="/task/#{task.id}" method="POST"
+    input type="hidden" name="_method" value="PUT"
+    - if task.completed_at.nil?
+      input type="submit" value="Complete Task" title="Complete Task"
+    - else
+      input type="submit" value="Uncomplete Task" title="Uncomplete Task"
+      
+  form action="task/#{task.id}" method="POST"
+    input type="hidden" name="_method" value="DELETE"
+    input type="submit" value="Delete"
