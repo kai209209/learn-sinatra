@@ -3,7 +3,8 @@ require 'slim'
 require 'data_mapper'
 
 get '/' do
-  @tasks = Task.all
+  # @tasks = Task.all
+  @lists = List.all(order: [:name])
   slim :index
 end
 
@@ -12,8 +13,9 @@ end
 #   slim :task
 # end
 
-post '/' do
-  @task = Task.create(name: params[:task])
+post '/:id' do
+  # @task = Task.create(name: params[:task])
+  List.get(params[:id]).tasks.create(params[:task])
   redirect to('/')
 end
 
@@ -29,6 +31,16 @@ put '/task/:id' do
   redirect to('/')
 end
 
+post '/new/list' do
+  List.create(params[:list])
+  redirect to('/')
+end
+
+delete '/list/:id' do
+  List.get(params[:id]).destroy
+  redirect to('/')
+end
+
 
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
 
@@ -37,6 +49,14 @@ class Task
   property :id, Serial
   property :name, String, required: true
   property :completed_at, DateTime
+  belongs_to :list
+end
+
+class List
+  include DataMapper::Resource
+  property :id, Serial
+  property :name, String, required: true
+  has n, :tasks, constraint: :destroy
 end
 
 DataMapper.finalize
