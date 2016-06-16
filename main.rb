@@ -4,7 +4,7 @@ require 'data_mapper'
 
 get '/' do
   # @tasks = Task.all
-  @lists = List.all(order: [:name])
+  @lists = List.all(order: :id)
   slim :index
 end
 
@@ -14,7 +14,6 @@ end
 # end
 
 post '/:id' do
-  # @task = Task.create(name: params[:task])
   List.get(params[:id]).tasks.create(params[:task])
   redirect to('/')
 end
@@ -40,9 +39,6 @@ delete '/list/:id' do
   List.get(params[:id]).destroy
   redirect to('/')
 end
-
-
-DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
 
 class Task
   include DataMapper::Resource
